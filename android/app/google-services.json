@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1088176400747",
+    "project_id": "bilal-6c42b",
+    "storage_bucket": "bilal-6c42b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1088176400747:android:8fafca153ff5ab070a842e",
+        "android_client_info": {
+          "package_name": "com.example.bilal"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAN4TFNwJqw43rOjNrZ0kgic0FK_65f9-k"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
