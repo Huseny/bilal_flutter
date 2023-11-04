@@ -1,3 +1,4 @@
+import 'package:bilal/presentation/components/custom_app_bar.dart';
 import 'package:bilal/presentation/components/menu_card.dart';
 import 'package:bilal/utils/homepage_list.dart';
 import 'package:flutter/material.dart';
@@ -10,6 +11,9 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        appBar: const TopBar(
+          title: "مرحبا",
+        ),
         body: GridView.builder(
             padding: const EdgeInsets.all(20),
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(

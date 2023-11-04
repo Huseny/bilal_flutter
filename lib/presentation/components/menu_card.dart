@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class MenuCard extends StatelessWidget {
   final String name;
@@ -14,9 +15,7 @@ class MenuCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        // To Do: Implement the routing here
-        // ignore: avoid_print
-        print(name);
+        GoRouter.of(context).pushNamed(routeName);
       },
       child: Container(
           decoration: const BoxDecoration(
