@@ -5,9 +5,11 @@ import 'package:go_router/go_router.dart';
 class ClearNav {
   static void clearAndNavigate(String path) {
     GoRouter goRouter = AppRoute.getRouter(AuthRepository());
-    while (goRouter.canPop() == true) {
-      goRouter.pop();
-    }
-    goRouter.pushReplacement(path);
+    try {
+      while (goRouter.canPop() == true) {
+        goRouter.pop();
+      }
+    } on Exception catch (_) {}
+    // goRouter.pushReplacement(path);
   }
 }

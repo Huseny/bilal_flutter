@@ -1,3 +1,4 @@
+import 'package:bilal/models/frontend_user.dart';
 import 'package:bilal/models/parent_model.dart';
 import 'package:bilal/repository/admin_parents_repository.dart';
 import 'package:bloc/bloc.dart';
@@ -24,7 +25,7 @@ class AdminParentBloc extends Bloc<AdminParentEvent, AdminParentState> {
       try {
         if (state is AdminParentCreationLoading) return;
         emit(const AdminParentCreationLoading());
-        List<dynamic> user = await adminParentsRepository.createParent(
+        FrontendUser user = await adminParentsRepository.createParent(
             event.name, event.sex, event.phone, event.email, event.address);
         emit(AdminParentsCreated(parent: user));
       } catch (error) {

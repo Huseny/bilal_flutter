@@ -40,9 +40,15 @@ class Parent implements ListedPerson {
   }
 
   @override
-  List<DataCell> getCells(int number) {
+  List<DataCell> getCells() {
     return [
-      DataCell(Text(number.toString())),
+      DataCell(IconButton(
+        icon: const Icon(Icons.edit),
+        onPressed: () {
+          // ignore: avoid_print
+          print(id);
+        },
+      )),
       DataCell(Text(name)),
       DataCell(Text(username)),
       DataCell(Text(sex)),

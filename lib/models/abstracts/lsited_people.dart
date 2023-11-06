@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
 
 abstract class ListedPerson {
-  List<DataCell> getCells(int number);
+  List<DataCell> getCells();
 }

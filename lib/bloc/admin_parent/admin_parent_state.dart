@@ -35,10 +35,11 @@ class AdminParentLoadingFailed extends AdminParentState {
 }
 
 class AdminParentsCreated extends AdminParentState {
-  final List<dynamic> parent;
+  final FrontendUser parent;
   const AdminParentsCreated({required this.parent});
+
   @override
-  List<dynamic> get props => parent;
+  List<FrontendUser> get props => [parent];
 }
 
 class AdminParentCreationLoading extends AdminParentState {

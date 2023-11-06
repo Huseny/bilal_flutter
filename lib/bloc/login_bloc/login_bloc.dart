@@ -22,7 +22,9 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
 
         emit(LoginSuccess(user: user!));
       } catch (error) {
-        emit(LoginFailure(error: error));
+        if (error is FirebaseAuthException) {
+          emit(LoginFailure(error: error));
+        }
       }
     });
 
@@ -35,7 +37,9 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
           emit(LogOutSuccess());
           emit(const LoginInitial());
         } catch (error) {
-          emit(LogOutFailure(error: error));
+          if (error is FirebaseAuthException) {
+            emit(LogOutFailure(error: error));
+          }
         }
       },
     );

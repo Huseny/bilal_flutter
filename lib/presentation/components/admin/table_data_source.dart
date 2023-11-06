@@ -22,7 +22,7 @@ class TableDataSource extends DataTableSource {
             notifyListeners();
           }
         },
-        cells: singleData.getCells(index));
+        cells: singleData.getCells());
   }
 
   @override

@@ -44,7 +44,7 @@ class AuthRepository {
       ))
           .user;
       return user;
-    } catch (_) {
+    } catch (e) {
       rethrow;
     }
   }
@@ -58,4 +58,8 @@ class AuthRepository {
       rethrow;
     }
   }
+
+  // Future<User> resetPassword(String id) async {
+  //   await _firebaseAu
+  // }
 }

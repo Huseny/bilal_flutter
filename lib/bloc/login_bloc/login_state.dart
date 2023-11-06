@@ -28,12 +28,12 @@ class LoginSuccess extends LoginState {
 }
 
 class LoginFailure extends LoginState {
-  final Object error;
+  final FirebaseAuthException error;
 
   const LoginFailure({required this.error});
 
   @override
-  List<Object?> get props => [error];
+  List<FirebaseAuthException?> get props => [error];
 }
 
 class LogOutLoading extends LoginState {
@@ -47,10 +47,10 @@ class LogOutSuccess extends LoginState {
 }
 
 class LogOutFailure extends LoginState {
-  final Object error;
+  final FirebaseAuthException error;
 
   const LogOutFailure({required this.error});
 
   @override
-  List<Object?> get props => [error];
+  List<FirebaseAuthException?> get props => [error];
 }

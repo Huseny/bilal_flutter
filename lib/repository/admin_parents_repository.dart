@@ -1,3 +1,4 @@
+import 'package:bilal/models/frontend_user.dart';
 import 'package:bilal/models/parent_model.dart';
 import 'package:bilal/utils/generator.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -23,7 +24,7 @@ class AdminParentsRepository {
     return parents;
   }
 
-  Future<List<dynamic>> createParent(
+  Future<FrontendUser> createParent(
     String name,
     String sex,
     String phone,
@@ -48,7 +49,7 @@ class AdminParentsRepository {
         "email": email ?? "",
         "address": address
       });
-      return [userCredential.user!, password];
+      return FrontendUser(user: userCredential.user!, password: password);
     } on Exception catch (_) {
       rethrow;
     }

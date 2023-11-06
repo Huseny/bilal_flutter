@@ -30,8 +30,8 @@ class _LogInState extends State<LogIn> {
           GoRouter.of(context).pushReplacement("/");
         } else if (state is LoginFailure) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text("invalid credentials or connection problem"),
+            SnackBar(
+              content: Text(state.error.code),
             ),
           );
         }

@@ -39,11 +39,8 @@ class _ManageParentsState extends State<ManageParents> with RestorationMixin {
 
   List<DataColumn> getColumns() {
     return [
-      DataColumn(
-        label: const Text("#"),
-        numeric: true,
-        onSort: (columnIndex, ascending) =>
-            _sort<num>((d) => d.number, columnIndex, ascending),
+      const DataColumn(
+        label: Icon(Icons.edit),
       ),
       DataColumn(
         label: const Text("الاسم الكامل"),
@@ -148,6 +145,35 @@ class _ManageParentsState extends State<ManageParents> with RestorationMixin {
       listener: (context, state) {
         if (state is AdminParentsLoaded) {
           _parentDataSource.updateData(state.parents);
+        } else if (state is AdminParentsCreated) {
+          showGeneralDialog(
+              context: context,
+              barrierDismissible: true,
+              barrierLabel:
+                  MaterialLocalizations.of(context).modalBarrierDismissLabel,
+              barrierColor: Colors.black.withOpacity(0.5),
+              transitionDuration: const Duration(milliseconds: 200),
+              pageBuilder: (context, animation1, animation2) {
+                return Center(
+                  child: Container(
+                    width: 200,
+                    height: 100,
+                    color: Colors.white,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Text('Custom Alert Dialog'),
+                        ElevatedButton(
+                          onPressed: () {
+                            Navigator.of(context).pop(); // Close the dialog
+                          },
+                          child: const Text('OK'),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              });
         }
       },
       builder: (context, state) {
@@ -159,8 +185,11 @@ class _ManageParentsState extends State<ManageParents> with RestorationMixin {
                 title: const Text("قائمة أولياء الأمور"),
               ),
               body: const Center(
-                child: LinearProgressIndicator(
-                  color: Colors.blue,
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 10.0),
+                  child: LinearProgressIndicator(
+                    color: Colors.blue,
+                  ),
                 ),
               ),
             );
@@ -202,6 +231,7 @@ class _ManageParentsState extends State<ManageParents> with RestorationMixin {
                           columns: getColumns(),
                           source: _parentDataSource)
                     ])));
+
           case AdminParentLoadingFailed:
             return Scaffold(
               appBar: AppBar(
@@ -216,6 +246,26 @@ class _ManageParentsState extends State<ManageParents> with RestorationMixin {
                 ),
               )),
             );
+
+          // case AdminParentsCreated:
+          //   return AlertDialog(
+          //     title: const Text('تم إنشاء ملف تعريف الوالدين بنجاح'),
+          //     content: Column(
+          //       mainAxisAlignment: MainAxisAlignment.center,
+          //       children: [
+          //         Text('اسم المستخدم: ${state.parent.user.email}'),
+          //         Text('كلمة المرور: ${state.parent.password}')
+          //       ],
+          //     ),
+          //     actions: <Widget>[
+          //       TextButton(
+          //         onPressed: () {
+          //           GoRouter.of(context).pop();
+          //         },
+          //         child: const Text('أغلق'),
+          //       ),
+          //     ],
+          //   );
 
           default:
             return Scaffold(
@@ -246,161 +296,150 @@ class _ManageParentsState extends State<ManageParents> with RestorationMixin {
         isDismissible: true,
         context: context,
         builder: (context) {
-          if (state is AdminParentsCreated) {
-            BlocProvider.of<AdminParentBloc>(context).add(const GetParents());
-            GoRouter.of(context).pop();
-            return AlertDialog(
-              title: const Text('تم إنشاء ملف تعريف الوالدين بنجاح'),
-              content: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text('اسم المستخدم: ${state.parent[0].email}'),
-                  Text('كلمة المرور: ${state.parent[1]}')
-                ],
-              ),
-              actions: <Widget>[
-                TextButton(
-                  onPressed: () {
-                    GoRouter.of(context).pop();
-                  },
-                  child: const Text('أغلق'),
-                ),
-              ],
-            );
-          } else if (state is AdminParentCreationLoading) {
-            return const Scaffold(
-              backgroundColor: Colors.transparent,
-              body: Center(
-                child: CircularProgressIndicator(),
-              ),
-            );
-          } else if (state is AdminParentCreationFailed) {
-            return AlertDialog(
-              title: const Text('تم إنشاء ملف تعريف الوالدين بنجاح'),
-              content: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Text("فشل إنشاء ملف تعريف الوالدين"),
-                    Text("سبب: ${state.e.toString()}")
-                  ]),
-              actions: <Widget>[
-                TextButton(
-                  onPressed: () {
-                    GoRouter.of(context).pop();
-                  },
-                  child: const Text('أغلق'),
-                ),
-              ],
-            );
-          }
-          return SingleChildScrollView(
-            child: Container(
-              padding: EdgeInsets.only(
-                bottom: MediaQuery.of(context).viewInsets.bottom,
-              ),
-              decoration: const BoxDecoration(
-                  borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(30),
-                      topRight: Radius.circular(30))),
-              child: Form(
-                key: _formKey,
-                child: Padding(
-                  padding: const EdgeInsets.all(15.0),
-                  child: Column(
-                    children: [
-                      CustomTextField(
-                        labelText: "الاسم الكامل",
-                        errorMsg: "اسم غير صالح",
-                        onSaved: (value) => setState(() {
-                          name = value!;
-                        }),
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      CustomSexChips(
-                          onSelected: (value) => setState(() {
-                                sex = value == 0 ? "M" : "F";
-                              })),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      CustomTextField(
-                        labelText: "رقم الهاتف",
-                        errorMsg: "رقم الهاتف غير صحيح",
-                        onSaved: (value) => setState(() {
-                          phone = value!;
-                        }),
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      CustomTextField(
-                        labelText: "البريد الإلكتروني",
-                        errorMsg: "البريد الإلكتروني غير صالح",
-                        onSaved: (value) => setState(() {
-                          email = value!;
-                        }),
-                        canEmpty: true,
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      CustomTextField(
-                        labelText: "عنوان",
-                        errorMsg: "العنوان غير صالح",
-                        onSaved: (value) => setState(() {
-                          address = value!;
-                        }),
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          Expanded(
-                            child: ElevatedButton(
-                              onPressed: () {
-                                GoRouter.of(context).pop();
-                              },
-                              style: const ButtonStyle(
-                                  backgroundColor:
-                                      MaterialStatePropertyAll(Colors.amber)),
-                              child: const Text("إلغاء"),
-                            ),
-                          ),
-                          const SizedBox(
-                            width: 20,
-                          ),
-                          Expanded(
-                            child: ElevatedButton(
-                                onPressed: () {
-                                  if (_formKey.currentState!.validate()) {
-                                    _formKey.currentState!.save();
-
-                                    BlocProvider.of<AdminParentBloc>(context)
-                                        .add(CreateParent(
-                                            name: name!,
-                                            sex: sex!,
-                                            phone: phone!,
-                                            email: email,
-                                            address: address!));
-                                  }
-                                },
-                                style: const ButtonStyle(
-                                    backgroundColor:
-                                        MaterialStatePropertyAll(Colors.blue)),
-                                child: const Text("حفظ")),
-                          )
-                        ],
-                      )
-                    ],
+          return BlocConsumer<AdminParentBloc, AdminParentState>(
+              listener: (context, state) {
+            if (state is AdminParentsLoaded) {
+              BlocProvider.of<AdminParentBloc>(context).add(const GetParents());
+              GoRouter.of(context).pop();
+            }
+          }, builder: (context, state) {
+            switch (state.runtimeType) {
+              case AdminParentCreationLoading:
+                return const Scaffold(
+                  body: Center(
+                    child: CircularProgressIndicator(),
                   ),
-                ),
-              ),
-            ),
-          );
+                );
+              case AdminParentCreationFailed:
+                return AlertDialog(
+                  title: const Text("فشل إنشاء ملف تعريف الوالدين"),
+                  content:
+                      Center(child: Text("سبب: ${state.props[0].toString()}")),
+                  actions: <Widget>[
+                    TextButton(
+                      onPressed: () {
+                        BlocProvider.of<AdminParentBloc>(context)
+                            .add(const GetParents());
+                        GoRouter.of(context).pop();
+                      },
+                      child: const Text('أغلق'),
+                    ),
+                  ],
+                );
+              default:
+                return SingleChildScrollView(
+                  child: Container(
+                    padding: EdgeInsets.only(
+                      bottom: MediaQuery.of(context).viewInsets.bottom,
+                    ),
+                    decoration: const BoxDecoration(
+                        borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(30),
+                            topRight: Radius.circular(30))),
+                    child: Form(
+                      key: _formKey,
+                      child: Padding(
+                        padding: const EdgeInsets.all(15.0),
+                        child: Column(
+                          children: [
+                            CustomTextField(
+                              labelText: "الاسم الكامل",
+                              errorMsg: "اسم غير صالح",
+                              onSaved: (value) => setState(() {
+                                name = value!;
+                              }),
+                            ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            CustomSexChips(
+                                onSelected: (value) => setState(() {
+                                      sex = value == 0 ? "M" : "F";
+                                    })),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            CustomTextField(
+                              labelText: "رقم الهاتف",
+                              errorMsg: "رقم الهاتف غير صحيح",
+                              onSaved: (value) => setState(() {
+                                phone = value!;
+                              }),
+                            ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            CustomTextField(
+                              labelText: "البريد الإلكتروني",
+                              errorMsg: "البريد الإلكتروني غير صالح",
+                              onSaved: (value) => setState(() {
+                                email = value!;
+                              }),
+                              canEmpty: true,
+                            ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            CustomTextField(
+                              labelText: "عنوان",
+                              errorMsg: "العنوان غير صالح",
+                              onSaved: (value) => setState(() {
+                                address = value!;
+                              }),
+                            ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                Expanded(
+                                  child: ElevatedButton(
+                                    onPressed: () {
+                                      GoRouter.of(context).pop();
+                                    },
+                                    style: const ButtonStyle(
+                                        backgroundColor:
+                                            MaterialStatePropertyAll(
+                                                Colors.amber)),
+                                    child: const Text("إلغاء"),
+                                  ),
+                                ),
+                                const SizedBox(
+                                  width: 20,
+                                ),
+                                Expanded(
+                                  child: ElevatedButton(
+                                      onPressed: () {
+                                        if (_formKey.currentState!.validate()) {
+                                          _formKey.currentState!.save();
+
+                                          BlocProvider.of<AdminParentBloc>(
+                                                  context)
+                                              .add(CreateParent(
+                                                  name: name!,
+                                                  sex: sex!,
+                                                  phone: phone!,
+                                                  email: email,
+                                                  address: address!));
+                                        }
+                                      },
+                                      style: const ButtonStyle(
+                                          backgroundColor:
+                                              MaterialStatePropertyAll(
+                                                  Colors.blue)),
+                                      child: const Text("حفظ")),
+                                )
+                              ],
+                            )
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+            }
+          });
         });
   }
 }
