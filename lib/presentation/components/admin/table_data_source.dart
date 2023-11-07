@@ -116,5 +116,5 @@ class RestorableTableSelections extends RestorableProperty<Set<int>> {
   }
 
   @override
-  Object toPrimitives() => _tableSelection.toList();
+  List toPrimitives() => _tableSelection.toList();
 }

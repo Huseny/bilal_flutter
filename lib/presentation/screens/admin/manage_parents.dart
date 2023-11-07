@@ -3,9 +3,9 @@ import 'package:bilal/presentation/components/admin/table_data_source.dart';
 import 'package:bilal/presentation/components/custom_sex_chips.dart';
 import 'package:bilal/presentation/components/custom_textform_field.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_beautiful_popup/main.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 
 class ManageParents extends StatefulWidget {
   const ManageParents({super.key});
@@ -23,6 +23,7 @@ class _ManageParentsState extends State<ManageParents> with RestorationMixin {
   final RestorableBool _sortAscending = RestorableBool(true);
   final RestorableTableSelections _parentSelections =
       RestorableTableSelections();
+  List selectedIndex = [];
 
   final _formKey = GlobalKey<FormState>();
 
@@ -40,12 +41,6 @@ class _ManageParentsState extends State<ManageParents> with RestorationMixin {
 
   List<DataColumn> getColumns() {
     return [
-      const DataColumn(
-        label: Text(
-          'تعديل الملف',
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-        ),
-      ),
       DataColumn(
         label: const Text(
           "الاسم الكامل",
@@ -143,6 +138,9 @@ class _ManageParentsState extends State<ManageParents> with RestorationMixin {
 
   void _updateSelectedParentRowListener() {
     _parentSelections.setSingleDataSelections(_parentDataSource.data);
+    setState(() {
+      selectedIndex = _parentSelections.toPrimitives();
+    });
   }
 
   @override
@@ -175,8 +173,8 @@ class _ManageParentsState extends State<ManageParents> with RestorationMixin {
       },
       builder: (context, state) {
         switch (state.runtimeType) {
-          case AdminParentsLoading:
           case AdminParentInitial:
+          case AdminParentsLoading:
             return Scaffold(
               appBar: AppBar(
                 title: const Text("قائمة أولياء الأمور"),
@@ -217,26 +215,17 @@ class _ManageParentsState extends State<ManageParents> with RestorationMixin {
                           showModal(context, state);
                         },
                         icon: const Icon(Icons.add)),
-                    IconButton(
-                        onPressed: () {
-                          final popup = BeautifulPopup(
-                            context: context,
-                            template: TemplateGift,
-                          );
-                          popup.show(
-                            title: 'String or Widget',
-                            content: 'String or Widget',
-                            actions: [
-                              popup.button(
-                                label: 'Close',
-                                onPressed: Navigator.of(context).pop,
-                              ),
-                            ],
-                            // bool barrierDismissible = false,
-                            // Widget close,
-                          );
-                        },
-                        icon: const Icon(Icons.abc))
+                    if (selectedIndex.length > 1)
+                      IconButton(
+                          onPressed: () {},
+                          icon: const Icon(LineAwesomeIcons.trash))
+                    else if (selectedIndex.length == 1)
+                      IconButton(
+                          onPressed: () {
+                            // ignore: avoid_print
+                            print(_parentDataSource.data[selectedIndex[0]].id);
+                          },
+                          icon: const Icon(LineAwesomeIcons.expand))
                   ],
                 ),
                 body: Scrollbar(
