@@ -1,4 +1,5 @@
 import 'package:bilal/bloc/admin_parent/admin_parent_bloc.dart';
+import 'package:bilal/presentation/components/admin/see_profile.dart';
 import 'package:bilal/presentation/components/admin/table_data_source.dart';
 import 'package:bilal/presentation/components/custom_sex_chips.dart';
 import 'package:bilal/presentation/components/custom_textform_field.dart';
@@ -222,8 +223,23 @@ class _ManageParentsState extends State<ManageParents> with RestorationMixin {
                     else if (selectedIndex.length == 1)
                       IconButton(
                           onPressed: () {
-                            // ignore: avoid_print
-                            print(_parentDataSource.data[selectedIndex[0]].id);
+                            Navigator.of(context).push(PageRouteBuilder(
+                                pageBuilder: ((BuildContext context, animation,
+                                        secondaryAnimation) =>
+                                    SeeProfile(fields: {
+                                      "اسم": _parentDataSource
+                                          .data[selectedIndex[0]].name,
+                                      'اسم المستخدم': _parentDataSource
+                                          .data[selectedIndex[0]].username,
+                                      "الجنس": _parentDataSource
+                                          .data[selectedIndex[0]].sex,
+                                      "رقم التليفون": _parentDataSource
+                                          .data[selectedIndex[0]].phone,
+                                      "بريد إلكتروني": _parentDataSource
+                                          .data[selectedIndex[0]].email,
+                                      "عنوان": _parentDataSource
+                                          .data[selectedIndex[0]].address,
+                                    }))));
                           },
                           icon: const Icon(LineAwesomeIcons.expand))
                   ],
