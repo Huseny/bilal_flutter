@@ -43,7 +43,10 @@ class Parent implements ListedPerson {
   List<DataCell> getCells() {
     return [
       DataCell(IconButton(
-        icon: const Icon(Icons.edit),
+        icon: const Icon(
+          Icons.edit_rounded,
+          size: 10,
+        ),
         onPressed: () {
           // ignore: avoid_print
           print(id);

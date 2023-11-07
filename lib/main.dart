@@ -1,6 +1,7 @@
 import 'package:bilal/bloc/admin_parent/admin_parent_bloc.dart';
 import 'package:bilal/bloc/bloc_observer.dart';
 import 'package:bilal/bloc/login_bloc/login_bloc.dart';
+import 'package:bilal/bloc/login_bloc/login_event.dart';
 import 'package:bilal/firebase_options.dart';
 import 'package:bilal/repository/auth_repository.dart';
 import 'package:bilal/routes/routes_config.dart';
@@ -33,10 +34,11 @@ class Bilal extends StatelessWidget {
     return MultiBlocProvider(
         providers: [
           BlocProvider<LoginBloc>(
-            create: (context) => LoginBloc(authRepository: authRepository),
+            create: (context) =>
+                LoginBloc(authRepository: authRepository)..add(LoadLogin()),
           ),
           BlocProvider<AdminParentBloc>(
-            create: (context) => AdminParentBloc(),
+            create: (context) => AdminParentBloc()..add(const GetParents()),
           )
         ],
         child: MaterialApp.router(

@@ -31,7 +31,7 @@ class AdminParentsRepository {
     String? email,
     String address,
   ) async {
-    final String userEmail = email ?? Generator.generateEmail(name);
+    final String userEmail = Generator.generateEmail(name);
     final String password = Generator.generatePassword();
     try {
       UserCredential userCredential = await _firebaseAuth
@@ -49,7 +49,11 @@ class AdminParentsRepository {
         "email": email ?? "",
         "address": address
       });
-      return FrontendUser(user: userCredential.user!, password: password);
+      return FrontendUser(
+          userInfo: Parent(name, userEmail.split('@')[0],
+              sex == "M" ? "ذكر" : "أنثى", phone, userEmail, address),
+          user: userCredential.user!,
+          password: password);
     } on Exception catch (_) {
       rethrow;
     }

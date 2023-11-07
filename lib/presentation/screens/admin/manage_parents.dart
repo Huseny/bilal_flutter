@@ -3,6 +3,7 @@ import 'package:bilal/presentation/components/admin/table_data_source.dart';
 import 'package:bilal/presentation/components/custom_sex_chips.dart';
 import 'package:bilal/presentation/components/custom_textform_field.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_beautiful_popup/main.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
@@ -40,35 +41,56 @@ class _ManageParentsState extends State<ManageParents> with RestorationMixin {
   List<DataColumn> getColumns() {
     return [
       const DataColumn(
-        label: Icon(Icons.edit),
+        label: Text(
+          'تعديل الملف',
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+        ),
       ),
       DataColumn(
-        label: const Text("الاسم الكامل"),
+        label: const Text(
+          "الاسم الكامل",
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+        ),
         onSort: (columnIndex, ascending) =>
             _sort<String>((d) => d.name, columnIndex, ascending),
       ),
       DataColumn(
-        label: const Text("اسم المستخدم"),
+        label: const Text(
+          "اسم المستخدم",
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+        ),
         onSort: (columnIndex, ascending) =>
             _sort<String>((d) => d.username, columnIndex, ascending),
       ),
       DataColumn(
-        label: const Text("جنس"),
+        label: const Text(
+          "جنس",
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+        ),
         onSort: (columnIndex, ascending) =>
             _sort<String>((d) => d.sex, columnIndex, ascending),
       ),
       DataColumn(
-        label: const Text("رقم التليفون"),
+        label: const Text(
+          "رقم التليفون",
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+        ),
         onSort: (columnIndex, ascending) =>
             _sort<String>((d) => d.phone, columnIndex, ascending),
       ),
       DataColumn(
-        label: const Text("البريد الإلكتروني"),
+        label: const Text(
+          "البريد الإلكتروني",
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+        ),
         onSort: (columnIndex, ascending) =>
             _sort<String>((d) => d.email, columnIndex, ascending),
       ),
       DataColumn(
-        label: const Text("عنوان"),
+        label: const Text(
+          "عنوان",
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+        ),
         onSort: (columnIndex, ascending) =>
             _sort<String>((d) => d.address, columnIndex, ascending),
       ),
@@ -146,34 +168,9 @@ class _ManageParentsState extends State<ManageParents> with RestorationMixin {
         if (state is AdminParentsLoaded) {
           _parentDataSource.updateData(state.parents);
         } else if (state is AdminParentsCreated) {
-          showGeneralDialog(
-              context: context,
-              barrierDismissible: true,
-              barrierLabel:
-                  MaterialLocalizations.of(context).modalBarrierDismissLabel,
-              barrierColor: Colors.black.withOpacity(0.5),
-              transitionDuration: const Duration(milliseconds: 200),
-              pageBuilder: (context, animation1, animation2) {
-                return Center(
-                  child: Container(
-                    width: 200,
-                    height: 100,
-                    color: Colors.white,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Text('Custom Alert Dialog'),
-                        ElevatedButton(
-                          onPressed: () {
-                            Navigator.of(context).pop(); // Close the dialog
-                          },
-                          child: const Text('OK'),
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-              });
+          List<dynamic> data = _parentDataSource.data;
+          data.add(state.parent.userInfo);
+          _parentDataSource.updateData(data);
         }
       },
       builder: (context, state) {
@@ -194,7 +191,23 @@ class _ManageParentsState extends State<ManageParents> with RestorationMixin {
               ),
             );
 
+          case AdminParentLoadingFailed:
+            return Scaffold(
+              appBar: AppBar(
+                title: const Text("قائمة أولياء الأمور"),
+              ),
+              body: const Center(
+                  child: Text(
+                "حدث خطأ ما، يرجى المحاولة مرة أخرى",
+                style: TextStyle(
+                  color: Colors.red,
+                  fontSize: 16,
+                ),
+              )),
+            );
+
           case AdminParentsLoaded:
+          default:
             return Scaffold(
                 appBar: AppBar(
                   title: const Text("قائمة أولياء الأمور"),
@@ -203,7 +216,27 @@ class _ManageParentsState extends State<ManageParents> with RestorationMixin {
                         onPressed: () {
                           showModal(context, state);
                         },
-                        icon: const Icon(Icons.add))
+                        icon: const Icon(Icons.add)),
+                    IconButton(
+                        onPressed: () {
+                          final popup = BeautifulPopup(
+                            context: context,
+                            template: TemplateGift,
+                          );
+                          popup.show(
+                            title: 'String or Widget',
+                            content: 'String or Widget',
+                            actions: [
+                              popup.button(
+                                label: 'Close',
+                                onPressed: Navigator.of(context).pop,
+                              ),
+                            ],
+                            // bool barrierDismissible = false,
+                            // Widget close,
+                          );
+                        },
+                        icon: const Icon(Icons.abc))
                   ],
                 ),
                 body: Scrollbar(
@@ -231,53 +264,6 @@ class _ManageParentsState extends State<ManageParents> with RestorationMixin {
                           columns: getColumns(),
                           source: _parentDataSource)
                     ])));
-
-          case AdminParentLoadingFailed:
-            return Scaffold(
-              appBar: AppBar(
-                title: const Text("قائمة أولياء الأمور"),
-              ),
-              body: const Center(
-                  child: Text(
-                "حدث خطأ ما، يرجى المحاولة مرة أخرى",
-                style: TextStyle(
-                  color: Colors.red,
-                  fontSize: 16,
-                ),
-              )),
-            );
-
-          // case AdminParentsCreated:
-          //   return AlertDialog(
-          //     title: const Text('تم إنشاء ملف تعريف الوالدين بنجاح'),
-          //     content: Column(
-          //       mainAxisAlignment: MainAxisAlignment.center,
-          //       children: [
-          //         Text('اسم المستخدم: ${state.parent.user.email}'),
-          //         Text('كلمة المرور: ${state.parent.password}')
-          //       ],
-          //     ),
-          //     actions: <Widget>[
-          //       TextButton(
-          //         onPressed: () {
-          //           GoRouter.of(context).pop();
-          //         },
-          //         child: const Text('أغلق'),
-          //       ),
-          //     ],
-          //   );
-
-          default:
-            return Scaffold(
-              appBar: AppBar(
-                title: const Text("قائمة أولياء الأمور"),
-              ),
-              body: const Center(
-                child: LinearProgressIndicator(
-                  color: Colors.blue,
-                ),
-              ),
-            );
         }
       },
     );
@@ -285,7 +271,7 @@ class _ManageParentsState extends State<ManageParents> with RestorationMixin {
 
   Future<dynamic> showModal(BuildContext context, AdminParentState state) {
     String? name;
-    String? sex;
+    String sex = "M";
     String? phone;
     String? email;
     String? address;
@@ -298,9 +284,73 @@ class _ManageParentsState extends State<ManageParents> with RestorationMixin {
         builder: (context) {
           return BlocConsumer<AdminParentBloc, AdminParentState>(
               listener: (context, state) {
-            if (state is AdminParentsLoaded) {
-              BlocProvider.of<AdminParentBloc>(context).add(const GetParents());
-              GoRouter.of(context).pop();
+            if (state is AdminParentsCreated) {
+              showDialog(
+                  context: context,
+                  builder: ((BuildContext context) => AlertDialog(
+                        title: const Text("تم إنشاء ملف تعريف الوالد بنجاح"),
+                        content: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Row(
+                              children: [
+                                Text("اسم المستخدم: "),
+                              ],
+                            ),
+                            Text(
+                              state.parent.user!.email!,
+                              style:
+                                  const TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            const Row(
+                              children: [
+                                Text("كلمة المرور: "),
+                              ],
+                            ),
+                            Text(
+                              state.parent.password,
+                              style:
+                                  const TextStyle(fontWeight: FontWeight.bold),
+                            )
+                          ],
+                        ),
+                        actions: [
+                          TextButton(
+                              onPressed: () {
+                                GoRouter.of(context).pop();
+                                GoRouter.of(context).pop();
+                              },
+                              child: const Text("أغلق"))
+                        ],
+                      )));
+            } else if (state is AdminParentCreationFailed) {
+              showDialog(
+                  context: context,
+                  builder: ((BuildContext context) => AlertDialog(
+                        title: const Text("فشل إنشاء ملف تعريف الوالدين"),
+                        content:
+                            Column(mainAxisSize: MainAxisSize.min, children: [
+                          Wrap(
+                            clipBehavior: Clip.antiAlias,
+                            children: [
+                              const Text("سبب: "),
+                              Text(
+                                state.props[0].toString(),
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold),
+                              )
+                            ],
+                          )
+                        ]),
+                        actions: <Widget>[
+                          TextButton(
+                            onPressed: () {
+                              GoRouter.of(context).pop();
+                            },
+                            child: const Text('أغلق'),
+                          ),
+                        ],
+                      )));
             }
           }, builder: (context, state) {
             switch (state.runtimeType) {
@@ -309,22 +359,6 @@ class _ManageParentsState extends State<ManageParents> with RestorationMixin {
                   body: Center(
                     child: CircularProgressIndicator(),
                   ),
-                );
-              case AdminParentCreationFailed:
-                return AlertDialog(
-                  title: const Text("فشل إنشاء ملف تعريف الوالدين"),
-                  content:
-                      Center(child: Text("سبب: ${state.props[0].toString()}")),
-                  actions: <Widget>[
-                    TextButton(
-                      onPressed: () {
-                        BlocProvider.of<AdminParentBloc>(context)
-                            .add(const GetParents());
-                        GoRouter.of(context).pop();
-                      },
-                      child: const Text('أغلق'),
-                    ),
-                  ],
                 );
               default:
                 return SingleChildScrollView(
@@ -336,110 +370,117 @@ class _ManageParentsState extends State<ManageParents> with RestorationMixin {
                         borderRadius: BorderRadius.only(
                             topLeft: Radius.circular(30),
                             topRight: Radius.circular(30))),
-                    child: Form(
-                      key: _formKey,
-                      child: Padding(
-                        padding: const EdgeInsets.all(15.0),
-                        child: Column(
-                          children: [
-                            CustomTextField(
-                              labelText: "الاسم الكامل",
-                              errorMsg: "اسم غير صالح",
-                              onSaved: (value) => setState(() {
-                                name = value!;
-                              }),
-                            ),
-                            const SizedBox(
-                              height: 10,
-                            ),
-                            CustomSexChips(
-                                onSelected: (value) => setState(() {
-                                      sex = value == 0 ? "M" : "F";
-                                    })),
-                            const SizedBox(
-                              height: 10,
-                            ),
-                            CustomTextField(
-                              labelText: "رقم الهاتف",
-                              errorMsg: "رقم الهاتف غير صحيح",
-                              onSaved: (value) => setState(() {
-                                phone = value!;
-                              }),
-                            ),
-                            const SizedBox(
-                              height: 10,
-                            ),
-                            CustomTextField(
-                              labelText: "البريد الإلكتروني",
-                              errorMsg: "البريد الإلكتروني غير صالح",
-                              onSaved: (value) => setState(() {
-                                email = value!;
-                              }),
-                              canEmpty: true,
-                            ),
-                            const SizedBox(
-                              height: 10,
-                            ),
-                            CustomTextField(
-                              labelText: "عنوان",
-                              errorMsg: "العنوان غير صالح",
-                              onSaved: (value) => setState(() {
-                                address = value!;
-                              }),
-                            ),
-                            const SizedBox(
-                              height: 10,
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                Expanded(
-                                  child: ElevatedButton(
-                                    onPressed: () {
-                                      GoRouter.of(context).pop();
-                                    },
-                                    style: const ButtonStyle(
-                                        backgroundColor:
-                                            MaterialStatePropertyAll(
-                                                Colors.amber)),
-                                    child: const Text("إلغاء"),
-                                  ),
-                                ),
-                                const SizedBox(
-                                  width: 20,
-                                ),
-                                Expanded(
-                                  child: ElevatedButton(
-                                      onPressed: () {
-                                        if (_formKey.currentState!.validate()) {
-                                          _formKey.currentState!.save();
-
-                                          BlocProvider.of<AdminParentBloc>(
-                                                  context)
-                                              .add(CreateParent(
-                                                  name: name!,
-                                                  sex: sex!,
-                                                  phone: phone!,
-                                                  email: email,
-                                                  address: address!));
-                                        }
-                                      },
-                                      style: const ButtonStyle(
-                                          backgroundColor:
-                                              MaterialStatePropertyAll(
-                                                  Colors.blue)),
-                                      child: const Text("حفظ")),
-                                )
-                              ],
-                            )
-                          ],
-                        ),
-                      ),
-                    ),
+                    child: _createParentForm(
+                        name, sex, phone, email, address, context),
                   ),
                 );
             }
           });
         });
+  }
+
+  Form _createParentForm(String? name, String sex, String? phone, String? email,
+      String? address, BuildContext context) {
+    return Form(
+      key: _formKey,
+      child: Padding(
+        padding: const EdgeInsets.all(15.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            CustomTextField(
+              labelText: "الاسم الكامل",
+              errorMsg: "اسم غير صالح",
+              onSaved: (value) => setState(() {
+                name = value!;
+              }),
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            CustomSexChips(
+                onSelected: (value) => setState(() {
+                      sex = value == 0 ? "M" : "F";
+                    })),
+            const SizedBox(
+              height: 10,
+            ),
+            CustomTextField(
+              labelText: "رقم الهاتف",
+              errorMsg: "رقم الهاتف غير صحيح",
+              keyboardType: TextInputType.phone,
+              onSaved: (value) => setState(() {
+                phone = value!;
+              }),
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            CustomTextField(
+              labelText: "البريد الإلكتروني",
+              errorMsg: "البريد الإلكتروني غير صالح",
+              keyboardType: TextInputType.emailAddress,
+              onSaved: (value) => setState(() {
+                email = value!;
+              }),
+              canEmpty: true,
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            CustomTextField(
+              labelText: "عنوان",
+              errorMsg: "العنوان غير صالح",
+              keyboardType: TextInputType.streetAddress,
+              onSaved: (value) => setState(() {
+                address = value!;
+              }),
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: () {
+                      GoRouter.of(context).pop();
+                    },
+                    style: const ButtonStyle(
+                        backgroundColor:
+                            MaterialStatePropertyAll(Colors.amber)),
+                    child: const Text("إلغاء"),
+                  ),
+                ),
+                const SizedBox(
+                  width: 20,
+                ),
+                Expanded(
+                  child: ElevatedButton(
+                      onPressed: () {
+                        if (_formKey.currentState!.validate()) {
+                          _formKey.currentState!.save();
+
+                          BlocProvider.of<AdminParentBloc>(context).add(
+                              CreateParent(
+                                  name: name!,
+                                  sex: sex,
+                                  phone: phone!,
+                                  email: email,
+                                  address: address!));
+                        }
+                      },
+                      style: const ButtonStyle(
+                          backgroundColor:
+                              MaterialStatePropertyAll(Colors.blue)),
+                      child: const Text("حفظ")),
+                )
+              ],
+            )
+          ],
+        ),
+      ),
+    );
   }
 }

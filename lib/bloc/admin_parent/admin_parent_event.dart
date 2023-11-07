@@ -22,7 +22,7 @@ class CreateParent extends AdminParentEvent {
       {required this.name,
       required this.sex,
       required this.phone,
-      required this.email,
+      this.email,
       required this.address});
 
   @override

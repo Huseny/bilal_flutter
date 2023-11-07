@@ -4,8 +4,8 @@ class Generator {
   static String generateEmail(String fullName) {
     String nameWithoutSpaces = fullName.toLowerCase().replaceAll(' ', '');
     String uniqueNumber = DateTime.now().millisecondsSinceEpoch.toString();
-
-    return "$nameWithoutSpaces$uniqueNumber@bilal.medresa";
+    String lastFourDigits = uniqueNumber.substring(uniqueNumber.length - 4);
+    return "$nameWithoutSpaces$lastFourDigits@bilal.medresa";
   }
 
   static String generatePassword({int length = 6}) {
